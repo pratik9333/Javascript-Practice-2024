@@ -4,11 +4,11 @@
 const player0El = document.querySelector(".player--0");
 const player1El = document.querySelector(".player--1");
 
-// selecting total score box of each player section
+// selecting total score box elements of each player section
 const score0El = document.querySelector("#score--0");
 const score1El = document.getElementById("score--1");
 
-// selecting current score box of each player section
+// selecting current score box elements of each player section
 const currentEl0 = document.getElementById("current--0");
 const currentEl1 = document.getElementById("current--1");
 
@@ -25,7 +25,7 @@ const init = function () {
     scores = [0, 0];
     currentScore = 0;
     activePlayer = 0;
-    playing = true;
+    gameStatus = true;
 
     score0El.textContent = 0;
     score1El.textContent = 0;
@@ -79,8 +79,8 @@ btnHoldEl.addEventListener("click", () => {
         scores[activePlayer] += currentScore;
         document.getElementById(`score--${activePlayer}`).textContent = scores[activePlayer];
 
-        // 2. if score is greater than 100, current player wins
-        if (scores[activePlayer] >= 10) {
+        // 2. if score is greater than 10, current player wins
+        if (scores[activePlayer] >= 100) {
             // finish the game
             diceEl.classList.remove("hidden");
             document.querySelector(`.player--${activePlayer}`).classList.remove("player--active");
@@ -94,12 +94,34 @@ btnHoldEl.addEventListener("click", () => {
     }
 })
 
-btnNew.addEventListener('click', init);
+newBtnEl.addEventListener('click', init);
 
 
-// newBtnEl.addEventListener("click", () => {
-//     currentScore = 0;
-//     activePlayer = 0;
-//     currentEl0.textContent = 0;
-//     currentEl1.textContent = 0;
-// })
+// covered edge cases 
+
+/*
+
+**** core functionality ****
+
+1. A game should start with initial scores which is 0 and with player 1. 
+
+2. A dice image with random value should appear everytime whenever player clicks on "roll dice" button.
+
+3. As player roles dice, the current score should get updated with dice value, and if in case the dice value turns out to be 1, it should switch to second player. 
+
+4. A player should lose the all current score that he got added if dice value i.e 1 and wont add anything to player's total score unless he presses hold button before the dice value turns out to be i.e 1. 
+
+5. Player current score should be added to total score if he presses hold button. if the score > 10 the current active player wins or else should switch back to different player. 
+
+6. If any player wins, the hold and role dice button shouldnt be working unless he goes for a new game. 
+
+7. On clicking new game, the game should reset back to initial scores i.e 0 and all buttons should be working as usual and should start with player 1 again. 
+
+**** dynamic style chaning functionality ****
+
+1. A white transparent background color should appear on every current active player area, should get removed if gets switch to second player. 
+
+2. If the current player wins, the players area background color should get filled with different unique color. 
+
+3. On reseting game, the white transparent background color should appear on player 1 again. 
+*/
