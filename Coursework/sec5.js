@@ -39,3 +39,107 @@ const uniqueCurrencies = new Set(["USD", "EUR", "GBP", "GBP", "USD", "EUR"])
 uniqueCurrencies.forEach(function(value,value,set){
     console.log(value+" "+value);
 })
+
+// map -> It returns the new array containing the results of applying an operation on all orignal array elements. or Used to loop over arrays, but, unlike foreach, the map method will give us A new array, this new array will contain in each position the results of applying an callback function to the orignal Array elements. 
+
+const eurToUsd = 1.1;
+
+// Note - All we do here is to pass this callback function into The map method, but we do not call this function by ourselves, it is the map method who will call this function for each of the array elements in the movement array.
+
+// -> Side Effects means in other words do some work without returning anything. 
+
+const movToUsd = movement.map((mov) => mov * eurToUsd);
+const movementDesc = movement.map((mov,index) => `Movement ${index+1}: you ${mov > 0 ? "deposited" : "withdrew"} ${Math.abs(mov)}`)
+
+
+// filter -> Is used to filter for elements in the orignal array which satisfies a certain condition. or It returns the new array containing the array elements that passed an specified test condition. 
+
+// Reduce -> The reduce() method of Array instances executes a user-supplied "reducer" callback function on each element of the array, in order, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.
+
+// Note -> The first time that the callback is run there is no "return value of the previous calculation". If supplied, an initial value may be used in its place. Otherwise the array element at index 0 is used as the initial value and iteration starts from the next element (index 1 instead of index 0).
+
+const array1 = [1, 2, 3, 4];
+
+/*
+first iteration 1, 2 i.e 1+2 -> 3
+second iteration 3, 3 i.e 3+3 -> 6
+third iteration 6, 4 i.e 6+4 -> 10
+*/
+const sumWithInitial = array1.reduce(
+  (accumulator, currentValue) => {
+    console.log(accumulator, currentValue);
+    return accumulator + currentValue
+  });
+
+console.log(sumWithInitial);
+// Expected output: 10
+
+// How reduce() works without an initial value
+const array = [15, 16, 17, 18, 19];
+
+function reducer(accumulator, currentValue, index) {
+  const returns = accumulator + currentValue;
+  console.log(
+    `accumulator: ${accumulator}, currentValue: ${currentValue}, index: ${index}, returns: ${returns}`,
+  );
+  return returns;
+}
+
+array.reduce(reducer);
+
+/*
+op
+accumulator	currentValue	index	Return value
+First call	15	16	1	31
+Second call	31	17	2	48
+Third call	48	18	3	66
+Fourth call	66	19	4	85
+
+*/
+
+// How reduce() works with an initial value
+
+[15, 16, 17, 18, 19].reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    10,
+  );
+
+/*
+op
+accumulator	currentValue	index	Return value
+First call	10	15	0	25
+Second call	25	16	1	41
+Third call	41	17	2	58
+Fourth call	58	18	3	76
+Fifth call	76	19	4	95
+*/
+
+// Maximum Value
+
+const maxValue = [250, -100, 120, -140, 1220, 121, -22].reduce((acc, mov) => acc > mov ? acc : mov)
+console.log(maxValue);
+
+/*
+op
+accumulator currentValue Return value
+First call	250 -100 250
+Second call	250	-120 250
+Third call	250	140	250
+Fourth call	250	-1220 1220
+Fifth call	1220 121 1220
+sixth call	1220 -22 1220
+*/
+
+// Through find method, you can retrive one element from The array if a condition passes. It Loops over the array.
+
+// **** Fundamental difference between find and filter method are ****
+
+// 1. Filter method retrieves all the element from the array if a certain condition passes whereas find method just retrieve first element. 
+// 2. Filter retrieves element in form of array elements, whereas the find method retrieve only one single element. 
+
+const withdrawl = movement.find(mov => mov < 0);
+
+//[250, -100, 120, -140, 1220, 121, -22];
+console.log(withdrawl);
+// op
+//-100

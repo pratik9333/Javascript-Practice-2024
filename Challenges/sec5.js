@@ -30,3 +30,24 @@ const checkDogs = function(dogsJulia, dogsKate){
 }
 
 checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3])
+
+///////////////////////////////////////
+// Coding Challenge #2
+
+const calcAvgHumanAge = (ages) => {
+    // calculating average human age from all adult dogs
+
+    // 1. First step was to calculate dog age in human age by using formula i.e age <= 2 -> 2 * age or else 16+age*4
+    // 2. Second step Was to excuding all dog ages which are less than 18 years old
+    // 3. Calculate Avg human age from all adult dogs
+
+    let arrLen = 0;
+    const avgHumanAge = ages.map((age)=> age<=2 ? 2 * age : 16 + age * 4).filter((age) =>  age >= 18).reduce((acc,age,index,arr) => {
+        arrLen = arr.length;
+        return acc+age
+    });
+    
+    console.log("Average Human Age of all dogs = "+ avgHumanAge / arrLen)
+}
+
+calcAvgHumanAge([5,2,4,1,15,8,3])
