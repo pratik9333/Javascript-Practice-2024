@@ -86,17 +86,21 @@ const calcDisplaySummary = function(account){
   labelSumInterest.textContent = `${interest}€`;
 }
 
-const displayMovements = (movements) => {
-  containerMovements.innerHTML = ""
+const displayMovements = (movements, sort = false) => {
+  containerMovements.innerHTML = "";
+
+
+  const movs = sort ? movements.slice().sort((a,b) => a - b) : movements;
+
   let html;
-    movements.forEach(function(movement, index) {
-    const type = movement > 0 ? "deposit" : "withdrawal";
+  movs.forEach(function(movement, index) {
+  const type = movement > 0 ? "deposit" : "withdrawal";
     html = `<div class="movements__row">
     <div class="movements__type movements__type--${type}">${index+1} ${type}</div>
     <div class="movements__value">${movement}€</div>
     </div>`
     containerMovements.insertAdjacentHTML("afterbegin", html);
-    }); 
+  }); 
 }
 
 const createUsernames = function(accs){
@@ -158,6 +162,43 @@ btnTransfer.addEventListener("click", (e) => {
   }
 })
 
+btnClose.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  if(inputCloseUsername.value === currentAccount.userName && Number(inputClosePin) === currentAccount.pin){
+    const index = accounts.findIndex(acc => acc.userName === currentAccount.userName);
+
+    // .indexOf(23)
+
+    // delete account
+    accounts.splice(index, 1)
+
+    // Hide UI
+    containerApp.style.opacity = 0;
+  }
+
+  inputCloseUsername.value = inputClosePin.value = '';
+})
+
+btnLoan.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value)
+
+  if(amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)){
+    currentAccount.movements.push(amount);
+
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = ""
+})
+let sorted = false;
+btnSort.addEventListener('click',(e) => {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+})
+
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -172,3 +213,43 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+
+// Some and Every method
+
+// EQUALITY
+console.log(movements.includes(23));
+
+// SOME: CONDITION: Checking deposits
+console.log(movements.some(mov => mov > 0))
+
+// EVERY
+console.log(account4.movements.every(mov => mov > 0))
+
+// Flat method
+
+// second method
+// const [{movements: one}, {movements: two}, {movements: three}, {movements: four}] = accounts;
+
+// First
+// for(const {movements} of accounts){
+//   movementss.push(movements)
+// }
+
+// flat
+const overallBalance = accounts.map((acc) => acc.movements).flat().reduce((acc, mov) => acc + mov);
+
+// flatMap
+const overallBalance2 = accounts.flatMap((acc) => acc.movements).reduce((acc, mov) => acc + mov);
+
+console.log(overallBalance2);
+
+// Sort
+
+// Dry Run
+
+// return < 0, a, b (Keep Order)
+// return > 0, b, a (switch order)
+movements.sort((a,b) => {
+  if(a > b) return 1;
+  if(b > a) return -1;
+})
