@@ -143,3 +143,78 @@ const withdrawl = movement.find(mov => mov < 0);
 console.log(withdrawl);
 // op
 //-100
+
+// Array Methods Practice
+
+// Data
+const account1 = {
+  owner: 'Jonas Schmedtmann',
+  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  interestRate: 1.2, // %
+  pin: 1111,
+};
+
+const account2 = {
+  owner: 'Jessica Davis',
+  movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
+  interestRate: 1.5,
+  pin: 2222,
+};
+
+const account3 = {
+  owner: 'Steven Thomas Williams',
+  movements: [200, -200, 340, -300, -20, 50, 400, -460],
+  interestRate: 0.7,
+  pin: 3333,
+};
+
+const account4 = {
+  owner: 'Sarah Smith',
+  movements: [430, 1000, 700, 50, 90],
+  interestRate: 1,
+  pin: 4444,
+};
+
+const accounts = [account1, account2, account3, account4];
+
+// 1.
+const bankDepositsTotal = accounts.flatMap((acc) => acc.movements).filter((mov) => mov > 0).reduce((acc, mov) => acc + mov);
+
+console.log("Total = "+bankDepositsTotal);
+
+// 2.
+// const numDeposits1000 = accounts.flatMap((acc) => acc.movements).filter((amount) => amount >= 1000);
+
+// using reduce
+
+const numDeposits1000 = accounts.flatMap((acc) => acc.movements).reduce((acc,cur) => (cur >= 1000 ? acc + 1 : acc),0);
+
+console.log(numDeposits1000);
+
+// 3.
+
+/* expected output
+
+{
+  sumOfDeposits : "value",
+  sumOfWithdrawls: "value"
+}
+*/
+
+const {deposits, withdrawls} = accounts.flatMap((acc) => acc.movements).reduce((sums, cur) => {
+  cur > 0 ? (sums.deposits += cur) : (sums.withdrawls+=cur);
+  return sums;
+}, {deposits: 0, withdrawls: 0});
+
+console.log(deposits,withdrawls);
+
+
+// 4.
+
+const convertTitleCase = (str) => {
+  const exceptions = ['a', 'an', 'the', 'but', 'or', 'on', 'in', 'with'];
+
+  return str.toLowerCase().split(" ").map((word) => exceptions.includes(word) ? word:`${word[0].toUpperCase()}${word.slice(1)}`).join(" ")
+}
+
+console.log(convertTitleCase("This is the an but or on nice example DUDE BRO IN the CHAIR"))
