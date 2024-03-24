@@ -218,3 +218,9 @@ const convertTitleCase = (str) => {
 }
 
 console.log(convertTitleCase("This is the an but or on nice example DUDE BRO IN the CHAIR"))
+
+// Creating Dates Object
+const now = new Date();
+
+// parsing Date
+console.log(new Date('December 15, 2024'))
