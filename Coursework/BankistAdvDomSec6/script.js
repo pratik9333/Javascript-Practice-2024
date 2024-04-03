@@ -141,9 +141,9 @@ logo.classList.toggle("c")
 
 // smooth scrolling
 
-// btn.addEventListener('click', () => {
-//   sec.scrollIntoView({behavior: "smooth"});
-// });
+btn.addEventListener('click', () => {
+  sec.scrollIntoView({behavior: "smooth"});
+});
 
 
 // Types of events and event handers
@@ -253,13 +253,6 @@ const handleHover = function(e){
   }
 }
 
-
-
-
-
-
-
-
 // Sticky Navigation: Intersection Observer API
 
 // What is intersection obersver api ? -> It allows our code to basically observe changes to the way that the certain target element intersects another element or the way it intersects the viewport.
@@ -339,6 +332,38 @@ const imgObserver = new IntersectionObserver(loadImg, {
 });
 
 imgTargets.forEach(img => imgObserver.observe(img));
+
+// slider 
+const slides = document.querySelectorAll(".slide");
+const btnLeft = document.querySelector(".slider__btn--left");
+const btnRight = document.querySelector(".slider__btn--right");
+
+const slider = document.querySelector(".slider")
+
+let currSlide = 0;
+const maxSlide = slides.length;
+
+const goToSlide = function(slide){
+  slides.forEach((s, i) => s.style.transform = `translateX(${100 * (i - slide)}%)`);
+}
+
+goToSlide(0);
+
+const handleSlide = function(e){
+  if(e.target.classList.contains("slider__btn--right") || e.key === "ArrowRight"){
+    if(currSlide === maxSlide - 1) currSlide = 0;
+    else currSlide++;
+  }
+  else{
+    if(currSlide === 0) currSlide = maxSlide - 1;
+    else currSlide--;
+  }
+  goToSlide(currSlide);
+}
+
+btnRight.addEventListener("click", handleSlide);
+btnLeft.addEventListener("click", handleSlide);
+document.addEventListener("keydown", handleSlide)
 
 
 
