@@ -363,13 +363,7 @@ const handleSlide = function(e){
 
 btnRight.addEventListener("click", handleSlide);
 btnLeft.addEventListener("click", handleSlide);
-document.addEventListener("keydown", handleSlide)
-
-
-
-
-
-
+document.addEventListener("keydown", handleSlide);
 
 // Bind method creates a copy of the function that is called on and it will set the this keyword in this function Call to whatever value we passed into bind. 
 
@@ -379,7 +373,6 @@ document.querySelector(".nav").addEventListener("mouseover", handleHover.bind(0.
 document.querySelector(".nav").addEventListener("mouseout", handleHover.bind(1))
 
 // Dom Traversing - we can select element based on other elements, sometimes we need to select relative to Certain other element. eg - direct child or direct parent element. 
-
 
 // Closest method is the opposite of querySelector method. both receive a query string, but querySelector find children no matter how deep in the dom tree while closest method find parents no matter how far up in the dom tree. 
 
