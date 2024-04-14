@@ -20,12 +20,12 @@ const Car = function(make, speed){
 
 Car.prototype.accelerate = function(){
     this.speed +=10;
-    console.log(this.make+" going at "+this.speed+" km/hr");
+    //console.log(this.make+" going at "+this.speed+" km/hr");
 }
 
 Car.prototype.break = function(){
     this.speed -=5;
-    console.log(this.make+" going at "+this.speed+" km/hr");
+    //console.log(this.make+" going at "+this.speed+" km/hr");
 }
 
 const bmw = new Car("BMW", 120);
@@ -80,8 +80,8 @@ EV.prototype = Object.create(Car.prototype);
 
 EV.prototype.accelerate = function(){
     this.speed+= 20;
-    this.charge-=1;
-    console.log(this.make+" going at "+ this.speed+" km/hr"+" with A charge of "+this.charge);
+    this.charge-= 1;
+    //console.log(this.make+" going at "+ this.speed+" km/hr"+" with A charge of "+this.charge);
 }
 
 EV.prototype.chargeBattery = function(chargeTo){
@@ -90,8 +90,39 @@ EV.prototype.chargeBattery = function(chargeTo){
 
 const evObj = new EV(23, "Tesla", 120);
 
-console.log(evObj);
+//console.log(evObj);
 evObj.accelerate();
 evObj.break();
 evObj.chargeBattery(90);
 evObj.accelerate();
+
+// Coding challenge 4 
+
+class EVCL extends Car1{
+    #charge;
+
+    constructor(speed, make, charge){
+        super(speed, make);
+        this.#charge = charge;
+    }
+
+    accelerate(){
+        this.speed += 20;
+        this.#charge -= 1;
+        console.log(this.make+" going at "+ this.speed+" km/hr"+" with A charge of "+this.#charge+"%");
+        return this;
+    }
+
+    chargeBattery(chargeTo){
+        this.#charge = chargeTo;
+        return this;
+    }
+
+    break(){
+        this.speed -= 8;
+        return this;
+    }
+}
+
+const carObj1 = new EVCL(120, "BMW", 40);
+carObj1.chargeBattery(80).accelerate();
