@@ -76,6 +76,7 @@ class App {
   #mapZoomLevel = 13;
   #workouts = [];
   #editOption = { status: false, targetID: null };
+  #markers = [];
 
   constructor() {
     // get users position
@@ -357,7 +358,8 @@ class App {
   }
 
   _renderWorkoutMarker(workout) {
-    L.marker(workout.coords)
+    const marker = L.marker(workout.coords);
+    marker
       .addTo(this.#map)
       .bindPopup(
         // bindPopup creates popup and binds to marker
@@ -373,13 +375,20 @@ class App {
         `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
       )
       .openPopup();
+    this.#markers.push(marker);
   }
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
 
+    if (!workoutEl) return;
+
+    const workout = this.#workouts.find(
+      workout => workout.id === workoutEl.dataset.id
+    );
+
     if (e.target.classList.contains('delete')) {
-      this._deleteWorkout(workoutEl);
+      this._deleteWorkout(workout);
       return;
     }
 
@@ -387,12 +396,6 @@ class App {
       this._editWorkout(workoutEl);
       return;
     }
-
-    if (!workoutEl) return;
-
-    const workout = this.#workouts.find(
-      workout => workout.id === workoutEl.dataset.id
-    );
 
     //TODO:checking documentation
     this.#map.setView(workout.coords, this.#mapZoomLevel, {
@@ -420,8 +423,8 @@ class App {
     });
   }
 
-  _deleteWorkout(workoutEl) {
-    const targetID = workoutEl.dataset.id;
+  _deleteWorkout(workout) {
+    const targetID = workout.id;
 
     const updatedWorkout = this.#workouts.filter(
       workout => workout.id !== targetID
@@ -434,6 +437,15 @@ class App {
         element.remove();
       }
     }
+
+    this.#markers.forEach(layer => {
+      if (
+        layer._latlng.lat == workout.coords[0] &&
+        layer._latlng.lng == workout.coords[1]
+      ) {
+        this.#map.removeLayer(layer);
+      }
+    });
 
     this._setLSData();
   }
