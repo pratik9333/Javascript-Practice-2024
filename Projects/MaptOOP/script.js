@@ -212,6 +212,10 @@ class App {
       this._renderWorkout(workout);
     });
 
+    this.#editOption.status = false;
+    this.#editOption.targetID = null;
+    inputType.disabled = false;
+
     // updating workouts in local storage
     this._setLSData();
   }
