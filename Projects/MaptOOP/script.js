@@ -91,12 +91,18 @@ class App {
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
+  // this points to the object calling method.
+
+  // under prototype chain.
   _getPosition() {
     // Geolocation api is a browser API
     // getting users current position by using geolocation
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this._loadMap.bind(this), () =>
-        alert('Could not get your position')
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          this._loadMap(position);
+        },
+        () => alert('Could not get your position')
       );
     }
   }
@@ -134,7 +140,6 @@ class App {
     const elevationFormRow = inputElevation.closest('.form__row');
     const cadenceFormRow = inputCadence.closest('.form__row');
     if (inputType.value === 'cycling') {
-      console.log(1);
       cadenceFormRow.classList.add('form__row--hidden');
       elevationFormRow.classList.remove('form__row--hidden');
     }
@@ -486,6 +491,8 @@ class App {
 }
 
 const app = new App();
+
+// class object instances + prototype property/methods of class.
 
 /* old code 
   // if(inputType.value === "cycling"){
