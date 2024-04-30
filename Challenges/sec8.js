@@ -88,6 +88,90 @@ const whereAmI = function (lat, lng) {
     });
 };
 
-whereAmI(52.508, 13.381);
-whereAmI(19.037, 72.873);
-whereAmI(-33.933, 18.474);
+// whereAmI(52.508, 13.381);
+// whereAmI(19.037, 72.873);
+// whereAmI(-33.933, 18.474);
+
+// Coding Challenge 2
+const imgContainer = document.querySelector(".images");
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const newImg = document.createElement("img");
+    newImg.src = imgPath;
+    newImg.addEventListener("load", function () {
+      imgContainer.append(newImg);
+      resolve(newImg);
+    });
+
+    newImg.addEventListener("error", (err) => {
+      reject(new Error("Cannot able to load image"));
+    });
+  });
+};
+
+let currentImg;
+
+// createImage("/img/img-1.jpg")
+//   .then((res) => {
+//     currentImg = res;
+//     console.log("image 1 loaded");
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = "none";
+//     console.log("image 1 hided");
+//     return createImage("/img/img-2.jpg");
+//   })
+//   .then((res) => {
+//     currentImg = res;
+//     console.log("image 2 loaded");
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = "none";
+//     console.log("image 2 hided");
+//   })
+//   .catch((err) => console.log(err));
+
+// Coding Challenge 3
+
+const loadNPause = async function () {
+  try {
+    const img1 = await createImage("/img/img-1.jpg");
+    console.log("image 1 loaded");
+    await wait(2);
+    img1.style.display = "none";
+    console.log("image 1 hided");
+
+    const img2 = await createImage("/img/img-2.jpg");
+    console.log("image 2 loaded");
+    await wait(2);
+    img2.style.display = "none";
+    console.log("image 2 hided");
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// loadNPause();
+// Async function always return a promise and not really the value we are interested in.
+// we want to return a fulfilled value of the promise that the async function returns.
+
+const loadAll = async function (imgArr) {
+  // const res2 = imgArr.map(async function (d) {
+  //   let x = await createImage(d);
+  //   return x;
+  // });
+  // console.log(res2);
+  const res = await Promise.all(imgArr.map((d) => createImage(d)));
+  res.forEach((img) => img.classList.add("parallel"));
+};
+
+loadAll(["/img/img-1.jpg", "/img/img-2.jpg", "/img/img-3.jpg"]);

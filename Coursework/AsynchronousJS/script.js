@@ -23,8 +23,8 @@
 // -> Each line of code waits for the previous line to finish execution. It can create problems when one line of code takes long time to run.
 
 // LEC 1
-const btn = document.querySelector(".btn-country");
 const countriesContainer = document.querySelector(".countries");
+const btn = document.querySelector(".btn-country");
 
 const renderCountry = function (data, neighbour = "") {
   let language, currency;
@@ -227,3 +227,188 @@ const lotteryPromise = new Promise(function (resolve, reject) {
 lotteryPromise
   .then((res) => console.log(res))
   .catch((err) => console.error(err));
+
+// Promisifying setTimeout
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+wait(2)
+  .then(() => {
+    console.log("I waited for 2 sec");
+    return wait(1);
+  })
+  .then(() => console.log("I waited for 1 sec"));
+
+// Lec 13 - Promisying geolocation API
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    return navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = function () {
+  getPosition
+    .then((pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      return fetch(
+        `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=9ac42e8b26ec44539ed287961b351b7e`
+      );
+    })
+    .then((response) => {
+      if (!response.ok)
+        throw new Error(
+          `Cannot able to fetch country details, please try again, (${response.status})`
+        );
+      return response.json();
+    })
+    .then((data) => {
+      const city = data.features[0].properties.city;
+      const country = data.features[0].properties.country;
+      console.log(`you are in ${city}, ${country}`);
+
+      // getting country data
+      return fetch(`https://restcountries.com/v3.1/name/${country}`);
+    })
+    .then((response) => {
+      if (!response.ok)
+        throw new Error(
+          `Cannot able to fetch country data, please try again, (${response.status})`
+        );
+      return response.json();
+    })
+    .then((data) => {
+      renderCountry(data[0]);
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
+btn.addEventListener("click", whereAmI);
+
+// Lec 14 - Consuming promises with async/await && lec - 15 handling error with try/catch
+
+// The async await are simply the syntatic sugar over then method in promises.
+// Its just a different way of consuming promises.
+// Async function always returns the promise.
+
+const whereAmI2 = async function () {
+  try {
+    const pos = await getPosition();
+
+    const { latitude: lat, longitude: lng } = pos.coords;
+
+    // reverse Geocoding
+    const resGeo = await fetch(
+      `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=9ac42e8b26ec44539ed287961b351b7e`
+    );
+
+    if (!resGeo.ok) {
+      throw new Error("Problem getting location data");
+    }
+
+    const dataGeo = await resGeo.json();
+
+    // Country Data
+    const country = dataGeo.features[0].properties.country;
+
+    // fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=9ac42e8b26ec44539ed287961b351b7e`).then((res) => console.log(res));
+
+    // Its Same as above commented code.
+    const res = await fetch(`https://restcountries.com/v3.1/name/${country}`);
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error("Problem getting country data");
+    }
+
+    renderCountry(data[0]);
+
+    return `you are in A ${country}`;
+  } catch (err) {
+    console.log(err);
+    console.log(err.message);
+
+    // Reject promise returned from async function
+    throw err;
+  }
+};
+
+console.log("1: will get location");
+// const city = whereAmI2();
+
+// Lec - 17 - returning values from async function
+// whereAmI2()
+//   .then((country) => console.log(`2: ${country}`))
+//   .catch((err) => console.log(`2: ${err.message}`))
+//   .finally(() => {
+//     console.log("3: Finished getting location");
+//   });
+
+// converting to async await
+(async function () {
+  try {
+    const country = await whereAmI2();
+    console.log(`2: ${country}`);
+  } catch (error) {
+    console.log(`2: ${err.message}`);
+  } finally {
+    console.log("3: Finished getting location");
+  }
+})();
+
+// Lec - 18 - Running promises in parallel
+
+const getThreeCountries = async function (c1, c2, c3) {
+  try {
+    const data = await Promise.all([
+      getJSON(`https://restcountries.com/v3.1/name/${c1}`),
+      getJSON(`https://restcountries.com/v3.1/name/${c2}`),
+      getJSON(`https://restcountries.com/v3.1/name/${c3}`),
+    ]);
+    console.log(data.map((d) => d[0].capital));
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+getThreeCountries("portugal", "canada", "tanzania");
+
+// lec 19 - Other Promise Combinators
+
+// Promise.race() - receives an array of promises and returns a promise. This promise returned by Promise.race() is settled as soon as one of the input promise is settled. A settled simply means the value is available, doesnt matter if the promise got rejected or fulfilled. In promise.race() the first settled promise wins the race. This returned promise settles with the eventual state of the first promise that settles.
+
+// In other words, it fulfills if the first promise to settle is fulfilled, and rejects if the first promise to settle is rejected.
+
+// The Promise.race() method is one of the promise concurrency methods. It's useful when you want the first async task to complete, but do not care about its eventual state (i.e. it can either succeed or fail).
+
+(async function () {
+  const res = await Promise.race([
+    getJSON(`https://restcountries.com/v3.1/name/italy`),
+    getJSON(`https://restcountries.com/v3.1/name/egypt`),
+    getJSON(`https://restcountries.com/v3.1/name/mexico`),
+  ]);
+
+  console.log(res);
+})();
+
+const timeout = function (sec) {
+  return new Promise(function (_, reject) {
+    setTimeout(() => {
+      reject(new Error("Request took too long"));
+    }, sec * 1000);
+  });
+};
+
+Promise.race([
+  getJSON(`https://restcountries.com/v3.1/name/tanzania`),
+  timeout(0.5),
+])
+  .then((res) => console.log(res[0]))
+  .catch((err) => console.log(err));
+
+// Promise.allSettled - takes in the array of promises, it will simply return an array of all the settled promises, no matter if the promises got rejected or not.
