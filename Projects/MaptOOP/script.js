@@ -421,7 +421,26 @@ class App {
     const data = JSON.parse(localStorage.getItem('workouts'));
     if (!data) return;
 
-    this.#workouts = data;
+    data.forEach(work => {
+      let workout;
+      if (work.type === 'running') {
+        workout = new Running(
+          [work.coords[0], work.coords[1]],
+          work.distance,
+          work.duration,
+          work.cadence
+        );
+      } else {
+        workout = new Cycling(
+          [work.coords[0], work.coords[1]],
+          work.distance,
+          work.duration,
+          work.elevationGain
+        );
+      }
+
+      this.#workouts.push(workout);
+    });
 
     this.#workouts.forEach(work => {
       this._renderWorkout(work);
